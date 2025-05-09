@@ -1,5 +1,5 @@
 
-import { Campaign, LinkedInProfile, PersonalizedMessageResponse, ApiResponse } from "../types";
+import type { Campaign, LinkedInProfile, PersonalizedMessageResponse, ApiResponse } from "../types/index.ts";
 
 // API base URL - in a real app, this would be an environment variable
 const API_BASE_URL = "http://localhost:3000";

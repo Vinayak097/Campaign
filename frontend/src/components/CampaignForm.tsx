@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { Campaign } from "@/types";
+import type { Campaign } from "@/types";
 import { getCampaignById, createCampaign, updateCampaign } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import {

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { LinkedInProfile } from "@/types";
+import type { LinkedInProfile } from "@/types";
 import { generatePersonalizedMessage } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import {
