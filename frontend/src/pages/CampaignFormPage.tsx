@@ -2,20 +2,22 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCampaignById, createCampaign, updateCampaign } from "../services/api";
 import type { Campaign } from "../types";
+import { useToast } from "../components/Toast";
 
 const CampaignFormPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(!!id);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    name: "Tech Startups Outreach Campaign",
+    description: "A targeted campaign to connect with founders and CTOs of emerging tech startups in the San Francisco Bay Area.",
     isActive: true,
-    leads: "",
-    accountIDs: ""
+    leads: "https://linkedin.com/in/techfounder1, https://linkedin.com/in/cto-startup, https://linkedin.com/in/siliconvalley-tech",
+    accountIDs: "acc123, acc456"
   });
 
   useEffect(() => {
@@ -29,7 +31,7 @@ const CampaignFormPage = () => {
           setFormData({
             name: campaign.name,
             description: campaign.description,
-            isActive: campaign.status === "ACTIVE",
+            isActive: campaign.status === "active",
             leads: campaign.leads.join(", "),
             accountIDs: campaign.accountIDs.join(", ")
           });
@@ -76,7 +78,7 @@ const CampaignFormPage = () => {
       const campaignData: Campaign = {
         name: formData.name,
         description: formData.description,
-        status: formData.isActive ? "ACTIVE" : "INACTIVE",
+        status: formData.isActive ? "active" : "inactive",
         leads: formData.leads.split(",").map(lead => lead.trim()).filter(Boolean),
         accountIDs: formData.accountIDs.split(",").map(accId => accId.trim()).filter(Boolean)
       };
@@ -89,13 +91,18 @@ const CampaignFormPage = () => {
       }
 
       if (response.data) {
-        alert(id ? "Campaign updated successfully" : "Campaign created successfully");
+        showToast(
+          id ? "Campaign updated successfully" : "Campaign created successfully",
+          "success"
+        );
         navigate("/");
       } else {
         setError(response.error || `Failed to ${id ? "update" : "create"} campaign`);
+        showToast(`Failed to ${id ? "update" : "create"} campaign`, "error");
       }
     } catch (error) {
       setError("An unexpected error occurred");
+      showToast("An unexpected error occurred", "error");
     } finally {
       setLoading(false);
     }
@@ -208,7 +215,7 @@ const CampaignFormPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className=" px-4 py-2 bg-brand-purple text-black border-b cursor-pointer rounded hover:bg-brand-darkPurple transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-gradient-to-r from-brand-blue to-brand-purple text-black border-b rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 shadow-md transform hover:-translate-y-0.5"
             >
               {loading ? "Saving..." : id ? "Update Campaign" : "Create Campaign"}
             </button>

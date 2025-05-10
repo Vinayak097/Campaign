@@ -4,33 +4,8 @@ import type { Campaign, LinkedInProfile, PersonalizedMessageResponse, ApiRespons
 // API base URL - in a real app, this would be an environment variable
 const API_BASE_URL = "http://localhost:3000/api";
 
-// Fallback data in case the backend is not available
-const fallbackCampaigns: Campaign[] = [
-  {
-    id: "1",
-    name: "Tech Startups Outreach",
-    description: "Reaching out to tech startup founders in San Francisco",
-    status: "active",
-    leads: ["https://linkedin.com/in/profile-1", "https://linkedin.com/in/profile-2"],
-    accountIDs: ["acc123", "acc456"]
-  },
-  {
-    id: "2",
-    name: "Marketing Managers Campaign",
-    description: "Targeting senior marketing managers in eCommerce",
-    status: "active",
-    leads: ["https://linkedin.com/in/profile-3"],
-    accountIDs: ["acc789"]
-  },
-  {
-    id: "3",
-    name: "Sales Leaders Outreach",
-    description: "Connecting with VP Sales and Sales Directors",
-    status: "active",
-    leads: ["https://linkedin.com/in/profile-4", "https://linkedin.com/in/profile-5"],
-    accountIDs: ["acc123"]
-  }
-];
+// Empty array for campaigns when backend is not available
+const fallbackCampaigns: Campaign[] = [];
 
 // Helper function to handle API responses
 const handleApiResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
@@ -193,10 +168,7 @@ export const generatePersonalizedMessage = async (profileData: LinkedInProfile):
     const response = await fetch(`${API_BASE_URL}/personalized-message`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        profileData,
-
-      })
+      body: JSON.stringify(profileData)
     });
 
     const result = await handleApiResponse<PersonalizedMessageResponse>(response);
@@ -209,40 +181,18 @@ export const generatePersonalizedMessage = async (profileData: LinkedInProfile):
   } catch (error) {
     console.error("Error generating message:", error);
 
-    // Fallback if backend API call fails - generate a message locally
-    const { name, job_title, company, location, summary } = profileData;
+    // Simple fallback message if backend API call fails
+    const { name, job_title, company } = profileData;
 
-    // Extract industry from summary if possible
-    const industryKeywords = [
-      "tech", "technology", "software", "IT",
-      "healthcare", "medical", "health",
-      "finance", "financial", "banking",
-      "marketing", "advertising", "media",
-      "retail", "ecommerce", "sales",
-      "education", "academic", "research"
-    ];
-
-    let industry = "your industry";
-    for (const keyword of industryKeywords) {
-      if (summary.toLowerCase().includes(keyword)) {
-        industry = keyword;
-        break;
-      }
-    }
-
-    // Generate a personalized message based on the profile data
+    // Generate a basic personalized message
     const message = `Hi ${name},
 
-I came across your profile and was impressed by your experience as ${job_title} at ${company}. Your background in ${industry} caught my attention, particularly your work in ${location}.
+I noticed you're a ${job_title} at ${company}. I'd like to connect to discuss how our campaign management system could help with your outreach efforts.
 
-${summary.includes("leadership") ? "Your leadership experience is exactly what I've been looking for in a connection." : "Your expertise is exactly what I've been looking for in a connection."}
+Would you be open to a quick conversation?
 
-I'm reaching out because our AI-powered campaign management platform has helped several ${industry} professionals streamline their outreach efforts and increase response rates by up to 40%.
-
-Would you be open to a quick 15-minute call next week to discuss how we might be able to help ${company} achieve similar results?
-
-Looking forward to connecting,
-[Your Name]`;
+Best regards,
+Campaign Management Team`;
 
     return {
       data: {

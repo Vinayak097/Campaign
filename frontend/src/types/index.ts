@@ -1,8 +1,8 @@
 
-export type CampaignStatus = "ACTIVE" | "INACTIVE" | "DELETED";
+export type CampaignStatus = "active" | "inactive" | "deleted";
 
 export interface Campaign {
-  id?: string;
+  _id?: string;
   name: string;
   description: string;
   status: CampaignStatus;

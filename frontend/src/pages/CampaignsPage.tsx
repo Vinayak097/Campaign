@@ -55,11 +55,11 @@ const CampaignsPage = () => {
   // Function to get status color
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
-      case "ACTIVE":
+      case "active":
         return "bg-brand-green/10 text-brand-green border-brand-green/20";
-      case "INACTIVE":
+      case "inactive":
         return "bg-brand-gray-100 text-brand-gray-600 border-brand-gray-200";
-      case "DELETED":
+      case "deleted":
         return "bg-brand-red/10 text-brand-red border-brand-red/20";
       default:
         return "bg-brand-blue/10 text-brand-blue border-brand-blue/20";
@@ -107,7 +107,7 @@ const CampaignsPage = () => {
       )}
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-16">
+        <div className="flex flex-col items-center justify-center py-16 min-h-[400px]">
           <div className="relative w-20 h-20 mb-6">
             <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-brand-gray-100"></div>
             <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-t-brand-blue border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
@@ -115,7 +115,7 @@ const CampaignsPage = () => {
           <p className="text-brand-gray-500 text-lg">Loading campaigns...</p>
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="bg-white rounded-apple shadow-apple-md p-12 text-center">
+        <div className="bg-white rounded-apple shadow-apple-md p-12 text-center min-h-[400px] flex flex-col justify-center">
           <div className="w-20 h-20 mx-auto bg-brand-gray-50 rounded-full flex items-center justify-center mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-brand-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -125,7 +125,7 @@ const CampaignsPage = () => {
           <p className="text-brand-gray-500 mb-8 max-w-md mx-auto">Create your first campaign to start managing your outreach efforts</p>
           <Link
             to="/campaigns/new"
-            className="px-8 py-4 bg-brand-blue text-white rounded-full hover:bg-brand-darkBlue transition-all duration-300 inline-flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            className="px-8 py-4 bg-gradient-to-r from-brand-blue to-brand-purple text-white rounded-full hover:shadow-lg transition-all duration-300 inline-flex items-center shadow-md transform hover:-translate-y-0.5"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -134,7 +134,7 @@ const CampaignsPage = () => {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-apple shadow-apple-md overflow-hidden">
+        <div className="bg-white rounded-apple shadow-apple-md overflow-hidden min-h-[400px]">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-brand-gray-100">
               <thead className="bg-brand-gray-50">
@@ -148,7 +148,7 @@ const CampaignsPage = () => {
               </thead>
               <tbody className="bg-white divide-y divide-brand-gray-100">
                 {campaigns.map((campaign) => (
-                  <tr key={campaign.id} className="hover:bg-brand-gray-50 transition-all duration-200">
+                  <tr key={campaign._id} className="hover:bg-brand-gray-50 transition-all duration-200">
                     <td className="px-6 py-5 whitespace-nowrap">
                       <div className="text-sm font-medium text-brand-gray-800">{campaign.name}</div>
                     </td>
@@ -171,7 +171,7 @@ const CampaignsPage = () => {
                     <td className="px-6 py-5 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-4">
                         <Link
-                          to={`/campaigns/edit/${campaign.id}`}
+                          to={`/campaigns/edit/${campaign._id}`}
                           className="text-brand-blue hover:text-brand-darkBlue transition-colors flex items-center group"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" viewBox="0 0 20 20" fill="currentColor">
@@ -180,11 +180,11 @@ const CampaignsPage = () => {
                           Edit
                         </Link>
                         <button
-                          onClick={() => handleDelete(campaign.id!)}
-                          disabled={deleteLoading === campaign.id}
+                          onClick={() => handleDelete(campaign._id!)}
+                          disabled={deleteLoading === campaign._id}
                           className="text-brand-red hover:text-brand-red/80 transition-colors flex items-center group"
                         >
-                          {deleteLoading === campaign.id ? (
+                          {deleteLoading === campaign._id ? (
                             <div className="flex items-center">
                               <svg className="animate-spin h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

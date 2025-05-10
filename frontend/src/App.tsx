@@ -2,11 +2,12 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import CampaignsPage from './pages/CampaignsPage';
 import CampaignFormPage from './pages/CampaignFormPage';
 import MessageGeneratorPage from './pages/MessageGeneratorPage';
+import { ToastProvider } from './components/Toast';
 
 // Apple-inspired modern layout component with navigation
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen bg-brand-gray-50">
+    <div className="flex flex-col min-h-screen bg-brand-gray-50">
       <header className="bg-white/80 backdrop-blur-md border-b border-brand-gray-100 sticky top-0 z-10">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
@@ -15,7 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <span className="text-black font-bold text-lg">CM</span>
               </div>
               <h1 className="text-2xl font-semibold bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-blue-500">
-                Campaign Manager 
+                Campaign Manager
               </h1>
             </Link>
             <nav className="flex space-x-2">
@@ -51,16 +52,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
       </header>
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-8 flex-grow">
         {children}
       </main>
-      <footer className="bg-blue-500 border-t border-brand-gray-100 py-6 mt-auto">
+      <footer className="bg-gradient-to-r from-brand-blue to-brand-purple text-black border-t border-brand-gray-100 py-6 mt-auto">
         <div className="container mx-auto px-6 text-center">
           <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
               <span className="text-black font-bold text-xs">CM</span>
             </div>
-            <p className="text-brand-gray-500 text-sm">
+            <p className="text-black  80 text-sm">
               Campaign Management System © {new Date().getFullYear()}
             </p>
           </div>
@@ -72,30 +73,32 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={
-          <Layout>
-            <CampaignsPage />
-          </Layout>
-        } />
-        <Route path="/campaigns/new" element={
-          <Layout>
-            <CampaignFormPage />
-          </Layout>
-        } />
-        <Route path="/campaigns/edit/:id" element={
-          <Layout>
-            <CampaignFormPage />
-          </Layout>
-        } />
-        <Route path="/message-generator" element={
-          <Layout>
-            <MessageGeneratorPage />
-          </Layout>
-        } />
-      </Routes>
-    </BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={
+            <Layout>
+              <CampaignsPage />
+            </Layout>
+          } />
+          <Route path="/campaigns/new" element={
+            <Layout>
+              <CampaignFormPage />
+            </Layout>
+          } />
+          <Route path="/campaigns/edit/:id" element={
+            <Layout>
+              <CampaignFormPage />
+            </Layout>
+          } />
+          <Route path="/message-generator" element={
+            <Layout>
+              <MessageGeneratorPage />
+            </Layout>
+          } />
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }
 

@@ -4,11 +4,11 @@ import type { LinkedInProfile } from "../types";
 
 const MessageGeneratorPage = () => {
   const [formData, setFormData] = useState<LinkedInProfile>({
-    name: "John Doe",
-    job_title: "Head of Marketing",
-    company: "TechCorp",
+    name: "Sarah Johnson",
+    job_title: "Marketing Director",
+    company: "TechInnovate Solutions",
     location: "San Francisco, CA",
-    summary: "Experienced in digital marketing strategies and lead generation"
+    summary: "Experienced marketing professional with 8+ years in SaaS and B2B technology. Specializing in growth marketing, demand generation, and digital strategy. Previously led marketing teams at CloudTech and DataSphere, achieving 40% YoY pipeline growth."
   });
 
   const [loading, setLoading] = useState(false);
@@ -59,14 +59,7 @@ const MessageGeneratorPage = () => {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-brand-purple to-brand-darkPurple bg-clip-text text-transparent">
-          LinkedIn Message Generator
-        </h1>
-        <p className="text-brand-gray-500 mt-1">
-          Create personalized outreach messages based on LinkedIn profiles using AI
-        </p>
-      </div>
+
 
       {error && (
         <div className="bg-brand-red/10 border border-brand-red/20 text-brand-red px-6 py-4 rounded-xl mb-8 flex items-center backdrop-blur-sm">
@@ -165,7 +158,7 @@ const MessageGeneratorPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-3 bg-brand-purple text-black border-b border-r hover:border cursor-pointer rounded-md hover:bg-brand-darkPurple transition-colors disabled:opacity-50 flex items-center justify-center"
+              className="w-full px-4 py-3 bg-gradient-to-r from-brand-blue to-brand-purple text-black rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center shadow-md transform hover:-translate-y-0.5"
             >
               {loading ? (
                 <>
@@ -198,18 +191,18 @@ const MessageGeneratorPage = () => {
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-12">
+            <div className="flex flex-col items-center justify-center py-12 min-h-[300px]">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple mb-4"></div>
-              <p className="text-gray-600">Generating your personalized message...</p>
+              <p className="text-brand-gray-600">Generating your personalized message...</p>
             </div>
           ) : generatedMessage ? (
             <div>
               <div className="flex flex-col">
-                <div className="whitespace-pre-wrap bg-gray-50 p-5 rounded-md border border-gray-200 mb-2 text-gray-700 max-h-[400px] overflow-y-auto">
+                <div className="whitespace-pre-wrap bg-brand-gray-50 p-5 rounded-md border border-brand-gray-200 mb-2 text-brand-gray-700 max-h-[400px] overflow-y-auto">
                   {generatedMessage}
                 </div>
                 {modelInfo && (
-                  <div className="text-xs text-gray-500 mb-4 flex items-center">
+                  <div className="text-xs text-brand-gray-500 mb-4 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                     </svg>
@@ -220,7 +213,7 @@ const MessageGeneratorPage = () => {
               <div className="flex justify-between items-center">
                 <button
                   onClick={copyMessageToClipboard}
-                  className="px-4 py-2 bg-brand-purple text-white rounded-md hover:bg-brand-darkPurple transition-colors flex items-center"
+                  className="px-4 py-2 text-black bg-gradient-to-r from-brand-blue to-brand-purple  rounded-md hover:shadow-md transition-all duration-300 flex items-center shadow-sm transform hover:-translate-y-0.5"
                 >
                   {copied ? (
                     <>
@@ -241,7 +234,7 @@ const MessageGeneratorPage = () => {
                 </button>
                 <button
                   onClick={() => setGeneratedMessage(null)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-brand-gray-500 hover:text-brand-gray-700 transition-colors"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -250,7 +243,7 @@ const MessageGeneratorPage = () => {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="flex flex-col items-center justify-center py-12 text-center min-h-[300px]">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-brand-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>

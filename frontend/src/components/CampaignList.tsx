@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Campaign } from "@/types";
+import type { Campaign } from "@/types";
 import { getCampaigns, deleteCampaign, updateCampaign } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
@@ -54,11 +54,11 @@ const CampaignList = () => {
   const handleStatusChange = async (id: string, isActive: boolean) => {
     try {
       const status = isActive ? "active" : "inactive";
-      const response = await updateCampaign(id, { status });
+      const response = await updateCampaign(id,  {status} );
       
       if (response.data) {
         setCampaigns(
-          campaigns.map((campaign) =>
+          campaigns.map((campaign:any) =>
             campaign.id === id ? { ...campaign, status } : campaign
           )
         );
@@ -91,7 +91,7 @@ const CampaignList = () => {
       const response = await deleteCampaign(id);
       if (response.message) {
         // Remove from UI
-        setCampaigns(campaigns.filter((campaign) => campaign.id !== id));
+        setCampaigns(campaigns.filter((campaign) => campaign._id !== id));
         toast({
           title: "Success",
           description: "Campaign deleted successfully",
@@ -141,7 +141,7 @@ const CampaignList = () => {
             </TableRow>
           ) : (
             campaigns.map((campaign) => (
-              <TableRow key={campaign.id}>
+              <TableRow key={campaign._id}>
                 <TableCell className="font-medium">{campaign.name}</TableCell>
                 <TableCell className="hidden md:table-cell">
                   {campaign.description.length > 50
@@ -151,13 +151,13 @@ const CampaignList = () => {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Switch
-                      checked={campaign.status === "ACTIVE"}
+                      checked={campaign.status === "active"}
                       onCheckedChange={(checked:any) =>
-                        handleStatusChange(campaign.id!, checked)
+                        handleStatusChange(campaign._id!, checked)
                       }
                     />
                     <Badge
-                      variant={campaign.status === "ACTIVE" ? "default" : "secondary"}
+                      variant={campaign.status === "active" ? "default" : "secondary"}
                     >
                       {campaign.status}
                     </Badge>
@@ -168,7 +168,7 @@ const CampaignList = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Link to={`/campaigns/edit/${campaign.id}`}>
+                    <Link to={`/campaigns/edit/${campaign._id}`}>
                       <Button variant="outline" size="icon">
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -176,7 +176,7 @@ const CampaignList = () => {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => handleDelete(campaign.id!)}
+                      onClick={() => handleDelete(campaign._id!)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
