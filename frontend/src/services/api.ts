@@ -1,8 +1,8 @@
 
 import type { Campaign, LinkedInProfile, PersonalizedMessageResponse, ApiResponse } from "../types";
 
-// API base URL - in a real app, this would be an environment variable
-const API_BASE_URL = "http://localhost:3000/api";
+// API base URL - production backend
+const API_BASE_URL = import.meta.env.MODE=="production" ? "https://campaign-a5mw.onrender.com/api":"http://localhost:3000/api";
 
 // Empty array for campaigns when backend is not available
 const fallbackCampaigns: Campaign[] = [];
