@@ -26,7 +26,10 @@ export const createPersonalizedMessage = async (req: Request, res: Response): Pr
     console.log('Message generated successfully');
     console.log('Message preview:', message.substring(0, 50) + '...');
 
-    res.status(200).json({ message });
+    res.status(200).json({
+      message,
+      model: "gemini-2.0-flash"
+    });
   } catch (error) {
     console.error('Error in createPersonalizedMessage controller:', error);
     res.status(500).json({
