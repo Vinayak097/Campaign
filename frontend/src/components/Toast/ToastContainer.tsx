@@ -19,12 +19,12 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, removeToast }) 
   const getToastClasses = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return 'bg-gradient-to-r from-brand-green to-emerald-500 text-white';
+        return 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium';
       case 'error':
-        return 'bg-gradient-to-r from-brand-red to-red-500 text-white';
+        return 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium';
       case 'info':
       default:
-        return 'bg-gradient-to-r from-brand-blue to-brand-purple text-white';
+        return 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 text-white font-medium';
     }
   };
 

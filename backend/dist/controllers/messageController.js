@@ -14,6 +14,7 @@ const aiService_1 = require("../services/aiService");
 const createPersonalizedMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log('Received personalized message request');
+        console.log(req.body);
         const { name, job_title, company, location, summary } = req.body;
         console.log(`Request for: ${name}, ${job_title} at ${company}`);
         if (!name || !job_title || !company) {
@@ -31,7 +32,10 @@ const createPersonalizedMessage = (req, res) => __awaiter(void 0, void 0, void 0
         const message = yield (0, aiService_1.generatePersonalizedMessage)(profile);
         console.log('Message generated successfully');
         console.log('Message preview:', message.substring(0, 50) + '...');
-        res.status(200).json({ message });
+        res.status(200).json({
+            message,
+            model: "gemini-2.0-flash"
+        });
     }
     catch (error) {
         console.error('Error in createPersonalizedMessage controller:', error);

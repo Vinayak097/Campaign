@@ -55,14 +55,14 @@ const CampaignsPage = () => {
   // Function to get status color
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
-      case "active":
-        return "bg-brand-green/10 text-brand-green border-brand-green/20";
-      case "inactive":
-        return "bg-brand-gray-100 text-brand-gray-600 border-brand-gray-200";
-      case "deleted":
-        return "bg-brand-red/10 text-brand-red border-brand-red/20";
+      case "ACTIVE":
+        return "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-teal-600 border-teal-500/20";
+      case "INACTIVE":
+        return "bg-gradient-to-r from-slate-200/50 to-slate-300/50 text-slate-600 border-slate-300/50";
+      case "DELETED":
+        return "bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-600 border-amber-500/20";
       default:
-        return "bg-brand-blue/10 text-brand-blue border-brand-blue/20";
+        return "bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 border-blue-500/20";
     }
   };
 
@@ -79,7 +79,7 @@ const CampaignsPage = () => {
         </div>
         <Link
           to="/campaigns/new"
-          className="px-6 py-3 bg-brand-blue text-black rounded-full hover:bg-brand-darkBlue transition-all duration-300 flex items-center justify-center md:justify-start w-full md:w-auto shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="px-6 py-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 text-white rounded-full hover:shadow-lg transition-all duration-300 flex items-center justify-center md:justify-start w-full md:w-auto shadow-md transform hover:-translate-y-0.5"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -125,7 +125,7 @@ const CampaignsPage = () => {
           <p className="text-brand-gray-500 mb-8 max-w-md mx-auto">Create your first campaign to start managing your outreach efforts</p>
           <Link
             to="/campaigns/new"
-            className="px-8 py-4 bg-gradient-to-r from-brand-blue to-brand-purple text-white rounded-full hover:shadow-lg transition-all duration-300 inline-flex items-center shadow-md transform hover:-translate-y-0.5"
+            className="px-8 py-4 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 text-white rounded-full hover:shadow-lg transition-all duration-300 inline-flex items-center shadow-md transform hover:-translate-y-0.5"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />

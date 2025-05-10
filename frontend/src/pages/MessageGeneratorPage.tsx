@@ -158,7 +158,7 @@ const MessageGeneratorPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-3 bg-gradient-to-r from-brand-blue to-brand-purple text-black rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center shadow-md transform hover:-translate-y-0.5"
+              className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 text-white rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center shadow-md transform hover:-translate-y-0.5"
             >
               {loading ? (
                 <>
@@ -213,7 +213,7 @@ const MessageGeneratorPage = () => {
               <div className="flex justify-between items-center">
                 <button
                   onClick={copyMessageToClipboard}
-                  className="px-4 py-2 text-black bg-gradient-to-r from-brand-blue to-brand-purple  rounded-md hover:shadow-md transition-all duration-300 flex items-center shadow-sm transform hover:-translate-y-0.5"
+                  className="px-4 py-2 text-white bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 rounded-md hover:shadow-md transition-all duration-300 flex items-center shadow-sm transform hover:-translate-y-0.5"
                 >
                   {copied ? (
                     <>

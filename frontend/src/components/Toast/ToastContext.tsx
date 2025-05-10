@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
 import ToastContainer from './ToastContainer';
 
 type ToastType = 'success' | 'error' | 'info';
@@ -33,7 +34,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const showToast = (message: string, type: ToastType = 'info') => {
     const id = Date.now();
     setToasts((prevToasts) => [...prevToasts, { id, message, type }]);
-    
+
     // Auto-remove toast after 3 seconds
     setTimeout(() => {
       setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));

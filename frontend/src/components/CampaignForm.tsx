@@ -67,7 +67,7 @@ const CampaignForm = () => {
     defaultValues: {
       name: "",
       description: "",
-      status: "ACTIVE",
+      status: "active",
       leads: "",
       accountIDs: "",
     },
@@ -87,7 +87,7 @@ const CampaignForm = () => {
         form.reset({
           name: campaign.name,
           description: campaign.description,
-          status: campaign.status === "active" ? "inactive" : campaign.status,
+          status: campaign.status === "active" ? "inactive" : campaign.status === "deleted" ? "inactive" : campaign.status,
           leads: campaign.leads.join("\n"),
           accountIDs: campaign.accountIDs.join("\n"),
         });

@@ -37,8 +37,8 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // Routes
-app.use('/campaigns', campaignRoutes_1.default);
-app.use('/personalized-message', messageRoutes_1.default);
+app.use('/api/campaigns', campaignRoutes_1.default);
+app.use('/api/personalized-message', messageRoutes_1.default);
 // Home route
 app.get('/', (_req, res) => {
     res.send('Campaign Management API is running');

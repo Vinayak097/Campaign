@@ -215,7 +215,7 @@ const CampaignFormPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-gradient-to-r from-brand-blue to-brand-purple text-black border-b rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 shadow-md transform hover:-translate-y-0.5"
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 text-white font-medium rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 shadow-md transform hover:-translate-y-0.5"
             >
               {loading ? "Saving..." : id ? "Update Campaign" : "Create Campaign"}
             </button>

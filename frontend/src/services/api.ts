@@ -44,7 +44,7 @@ export const getCampaignById = async (id: string): Promise<ApiResponse<Campaign>
     console.error("Error fetching campaign:", error);
 
     // Fallback to local data if backend is not available
-    const campaign = fallbackCampaigns.find(c => c.id === id);
+    const campaign = fallbackCampaigns.find(c => c._id === id);
     if (!campaign) {
       return { error: "Campaign not found" };
     }
@@ -115,7 +115,7 @@ export const updateCampaign = async (id: string, campaign: Partial<Campaign>): P
     console.error("Error updating campaign:", error);
 
     // Fallback behavior if backend is not available
-    const index = fallbackCampaigns.findIndex(c => c.id === id);
+    const index = fallbackCampaigns.findIndex(c => c._id === id);
     if (index === -1) {
       return { error: "Campaign not found" };
     }
@@ -146,7 +146,7 @@ export const deleteCampaign = async (id: string): Promise<ApiResponse<void>> => 
     console.error("Error deleting campaign:", error);
 
     // Fallback behavior if backend is not available
-    const index = fallbackCampaigns.findIndex(c => c.id === id);
+    const index = fallbackCampaigns.findIndex(c => c._id === id);
     if (index === -1) {
       return { error: "Campaign not found" };
     }
