@@ -27,8 +27,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/campaigns', campaignRoutes);
-app.use('/personalized-message', messageRoutes);
+app.use('/api/campaigns', campaignRoutes);
+app.use('/api/personalized-message', messageRoutes);
 
 // Home route
 app.get('/', (_req: Request, res: Response) => {

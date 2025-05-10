@@ -1,50 +1,21 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/components/ui/use-toast";
-import { getCampaignById, createCampaign, updateCampaign } from "@/services/api";
-import type { Campaign, CampaignStatus } from "@/types";
-
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  isActive: z.boolean(),
-  leads: z.string(),
-  accountIDs: z.string(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { getCampaignById, createCampaign, updateCampaign } from "../services/api";
+import type { Campaign } from "../types";
 
 const CampaignFormPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(!!id);
+  const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      isActive: true,
-      leads: "",
-      accountIDs: "",
-    },
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    isActive: true,
+    leads: "",
+    accountIDs: ""
   });
 
   useEffect(() => {
@@ -55,28 +26,20 @@ const CampaignFormPage = () => {
         const response = await getCampaignById(id);
         if (response.data) {
           const campaign = response.data;
-          form.reset({
+          setFormData({
             name: campaign.name,
             description: campaign.description,
             isActive: campaign.status === "ACTIVE",
             leads: campaign.leads.join(", "),
-            accountIDs: campaign.accountIDs.join(", "),
+            accountIDs: campaign.accountIDs.join(", ")
           });
         } else {
-          toast({
-            title: "Error",
-            description: response.error || "Failed to fetch campaign",
-            variant: "destructive",
-          });
-          navigate("/campaigns");
+          setError(response.error || "Failed to fetch campaign");
+          setTimeout(() => navigate("/"), 2000);
         }
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred",
-          variant: "destructive",
-        });
-        navigate("/campaigns");
+        setError("An unexpected error occurred");
+        setTimeout(() => navigate("/"), 2000);
       } finally {
         setInitialLoading(false);
       }
@@ -87,18 +50,35 @@ const CampaignFormPage = () => {
     } else {
       setInitialLoading(false);
     }
-  }, [id, navigate, toast, form]);
+  }, [id, navigate]);
 
-  const onSubmit = async (values: FormValues) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleToggleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      isActive: e.target.checked
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
       const campaignData: Campaign = {
-        name: values.name,
-        description: values.description,
-        status: values.isActive ? "ACTIVE" : "INACTIVE",
-        leads: values.leads.split(",").map((lead) => lead.trim()).filter(Boolean),
-        accountIDs: values.accountIDs.split(",").map((id) => id.trim()).filter(Boolean),
+        name: formData.name,
+        description: formData.description,
+        status: formData.isActive ? "active" : "inactive",
+        leads: formData.leads.split(",").map(lead => lead.trim()).filter(Boolean),
+        accountIDs: formData.accountIDs.split(",").map(accId => accId.trim()).filter(Boolean)
       };
 
       let response;
@@ -109,24 +89,13 @@ const CampaignFormPage = () => {
       }
 
       if (response.data) {
-        toast({
-          title: "Success",
-          description: id ? "Campaign updated successfully" : "Campaign created successfully",
-        });
-        navigate("/campaigns");
+        alert(id ? "Campaign updated successfully" : "Campaign created successfully");
+        navigate("/");
       } else {
-        toast({
-          title: "Error",
-          description: response.error || `Failed to ${id ? "update" : "create"} campaign`,
-          variant: "destructive",
-        });
+        setError(response.error || `Failed to ${id ? "update" : "create"} campaign`);
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
+      setError("An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -134,128 +103,112 @@ const CampaignFormPage = () => {
 
   if (initialLoading) {
     return (
-      <div className="container py-8">
-        <div className="flex justify-center">
-          <p>Loading campaign data...</p>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-pulse text-brand-purple">Loading campaign data...</div>
       </div>
     );
   }
 
   return (
-    <div className="container py-8">
+    <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold">{id ? "Edit" : "Create"} Campaign</h1>
-        <p className="text-muted-foreground">
+        <p className="text-gray-600">
           {id ? "Update campaign details" : "Set up a new outreach campaign"}
         </p>
       </div>
 
-      <div className="max-w-2xl">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{error}</p>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Campaign Name</label>
+            <input
+              type="text"
               name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Campaign Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter campaign name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-purple"
+              placeholder="Enter campaign name"
             />
+          </div>
 
-            <FormField
-              control={form.control}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
               name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter campaign description"
-                      rows={3}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-purple"
+              placeholder="Enter campaign description"
             />
+          </div>
 
-            <FormField
-              control={form.control}
-              name="isActive"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Active Status</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      Set the campaign as active or inactive
-                    </p>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="leads"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Leads</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter LinkedIn profile URLs, separated by commas"
-                      rows={3}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="accountIDs"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Account IDs</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter account IDs, separated by commas"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex gap-4">
-              <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : id ? "Update Campaign" : "Create Campaign"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate("/campaigns")}
-              >
-                Cancel
-              </Button>
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div>
+              <h3 className="font-medium">Active Status</h3>
+              <p className="text-sm text-gray-600">Set the campaign as active or inactive</p>
             </div>
-          </form>
-        </Form>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={handleToggleChange}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-purple/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple"></div>
+            </label>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Leads</label>
+            <textarea
+              name="leads"
+              value={formData.leads}
+              onChange={handleChange}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-purple"
+              placeholder="Enter LinkedIn profile URLs, separated by commas"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Account IDs</label>
+            <input
+              type="text"
+              name="accountIDs"
+              value={formData.accountIDs}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-purple"
+              placeholder="Enter account IDs, separated by commas"
+            />
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 bg-brand-purple text-white rounded hover:bg-brand-darkPurple transition-colors disabled:opacity-50"
+            >
+              {loading ? "Saving..." : id ? "Update Campaign" : "Create Campaign"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 
-export type CampaignStatus = "ACTIVE" | "INACTIVE" | "DELETED";
+export type CampaignStatus = "active" | "inactive" | "deleted";
 
 export interface Campaign {
   id?: string;
@@ -20,6 +20,7 @@ export interface LinkedInProfile {
 
 export interface PersonalizedMessageResponse {
   message: string;
+  model?: string;
 }
 
 export interface ApiResponse<T> {

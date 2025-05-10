@@ -31,7 +31,7 @@ import * as z from "zod";
 const formSchema = z.object({
   name: z.string().min(1, "Campaign name is required"),
   description: z.string().min(1, "Description is required"),
-  status: z.enum(["ACTIVE", "INACTIVE"]),
+  status: z.enum(["active", "inactive"]),
   leads: z.string().refine(
     (val) => {
       // Split by newline and validate each as URL
@@ -87,7 +87,7 @@ const CampaignForm = () => {
         form.reset({
           name: campaign.name,
           description: campaign.description,
-          status: campaign.status === "DELETED" ? "INACTIVE" : campaign.status,
+          status: campaign.status === "active" ? "inactive" : campaign.status,
           leads: campaign.leads.join("\n"),
           accountIDs: campaign.accountIDs.join("\n"),
         });
@@ -212,7 +212,7 @@ const CampaignForm = () => {
                     <FormLabel>Status</FormLabel>
                     <FormControl>
                       <Switch
-                        checked={field.value === "ACTIVE"}
+                        checked={field.value === "active"}
                         onCheckedChange={(checked) =>
                           field.onChange(checked ? "ACTIVE" : "INACTIVE")
                         }

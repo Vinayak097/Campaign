@@ -53,7 +53,7 @@ const CampaignList = () => {
 
   const handleStatusChange = async (id: string, isActive: boolean) => {
     try {
-      const status = isActive ? "ACTIVE" : "INACTIVE";
+      const status = isActive ? "active" : "inactive";
       const response = await updateCampaign(id, { status });
       
       if (response.data) {

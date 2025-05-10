@@ -1,16 +1,16 @@
 
-import type { Campaign, LinkedInProfile, PersonalizedMessageResponse, ApiResponse } from "../types/index.ts";
+import type { Campaign, LinkedInProfile, PersonalizedMessageResponse, ApiResponse } from "../types";
 
 // API base URL - in a real app, this would be an environment variable
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "http://localhost:3000/api";
 
-// Mock data for development
-const mockCampaigns: Campaign[] = [
+// Fallback data in case the backend is not available
+const fallbackCampaigns: Campaign[] = [
   {
     id: "1",
     name: "Tech Startups Outreach",
     description: "Reaching out to tech startup founders in San Francisco",
-    status: "ACTIVE",
+    status: "active",
     leads: ["https://linkedin.com/in/profile-1", "https://linkedin.com/in/profile-2"],
     accountIDs: ["acc123", "acc456"]
   },
@@ -18,7 +18,7 @@ const mockCampaigns: Campaign[] = [
     id: "2",
     name: "Marketing Managers Campaign",
     description: "Targeting senior marketing managers in eCommerce",
-    status: "INACTIVE",
+    status: "active",
     leads: ["https://linkedin.com/in/profile-3"],
     accountIDs: ["acc789"]
   },
@@ -26,106 +26,230 @@ const mockCampaigns: Campaign[] = [
     id: "3",
     name: "Sales Leaders Outreach",
     description: "Connecting with VP Sales and Sales Directors",
-    status: "ACTIVE",
+    status: "active",
     leads: ["https://linkedin.com/in/profile-4", "https://linkedin.com/in/profile-5"],
     accountIDs: ["acc123"]
   }
 ];
 
+// Helper function to handle API responses
+const handleApiResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    return {
+      error: errorData.message || `Error: ${response.status} ${response.statusText}`
+    };
+  }
+
+  const data = await response.json();
+  return { data };
+};
+
 // Campaign APIs
 export const getCampaigns = async (): Promise<ApiResponse<Campaign[]>> => {
-  // In a real app, this would be a fetch call
-  // return fetch(`${API_BASE_URL}/campaigns`).then(res => res.json());
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaigns`);
+    return await handleApiResponse<Campaign[]>(response);
+  } catch (error) {
+    console.error("Error fetching campaigns:", error);
 
-  // For development, return mock data
-  return {
-    data: mockCampaigns.filter(campaign => campaign.status !== "DELETED")
-  };
+
+    return {
+      data: fallbackCampaigns.filter(campaign => campaign.status !== "deleted"),
+      error: "Using fallback data: Backend server is not available"
+    };
+  }
 };
 
 export const getCampaignById = async (id: string): Promise<ApiResponse<Campaign>> => {
-  // In a real app: return fetch(`${API_BASE_URL}/campaigns/${id}`).then(res => res.json());
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaigns/${id}`);
+    return await handleApiResponse<Campaign>(response);
+  } catch (error) {
+    console.error("Error fetching campaign:", error);
 
-  const campaign = mockCampaigns.find(c => c.id === id);
-  if (!campaign) {
-    return { error: "Campaign not found" };
+    // Fallback to local data if backend is not available
+    const campaign = fallbackCampaigns.find(c => c.id === id);
+    if (!campaign) {
+      return { error: "Campaign not found" };
+    }
+
+    return {
+      data: campaign,
+      error: "Using fallback data: Backend server is not available"
+    };
   }
-  return { data: campaign };
 };
 
 export const createCampaign = async (campaign: Campaign): Promise<ApiResponse<Campaign>> => {
-  // In a real app:
-  // return fetch(`${API_BASE_URL}/campaigns`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(campaign)
-  // }).then(res => res.json());
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaigns`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(campaign)
+    });
 
-  // For development:
-  const newCampaign = {
-    ...campaign,
-    id: String(mockCampaigns.length + 1)
-  };
-  mockCampaigns.push(newCampaign);
-  return { data: newCampaign, message: "Campaign created successfully" };
+    const result = await handleApiResponse<Campaign>(response);
+
+    if (result.data) {
+      return {
+        data: result.data,
+        message: "Campaign created successfully"
+      };
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error creating campaign:", error);
+
+    // Fallback behavior if backend is not available
+    const newCampaign = {
+      ...campaign,
+      id: String(Date.now()) // Generate a unique ID
+    };
+
+    fallbackCampaigns.push(newCampaign);
+
+    return {
+      data: newCampaign,
+      message: "Campaign created successfully (using fallback storage)",
+      error: "Backend server is not available"
+    };
+  }
 };
 
 export const updateCampaign = async (id: string, campaign: Partial<Campaign>): Promise<ApiResponse<Campaign>> => {
-  // In a real app:
-  // return fetch(`${API_BASE_URL}/campaigns/${id}`, {
-  //   method: 'PUT',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(campaign)
-  // }).then(res => res.json());
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaigns/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(campaign)
+    });
 
-  // For development:
-  const index = mockCampaigns.findIndex(c => c.id === id);
-  if (index === -1) {
-    return { error: "Campaign not found" };
+    const result = await handleApiResponse<Campaign>(response);
+
+    if (result.data) {
+      return {
+        data: result.data,
+        message: "Campaign updated successfully"
+      };
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error updating campaign:", error);
+
+    // Fallback behavior if backend is not available
+    const index = fallbackCampaigns.findIndex(c => c.id === id);
+    if (index === -1) {
+      return { error: "Campaign not found" };
+    }
+
+    fallbackCampaigns[index] = { ...fallbackCampaigns[index], ...campaign };
+
+    return {
+      data: fallbackCampaigns[index],
+      message: "Campaign updated successfully (using fallback storage)",
+      error: "Backend server is not available"
+    };
   }
-
-  mockCampaigns[index] = { ...mockCampaigns[index], ...campaign };
-  return { data: mockCampaigns[index], message: "Campaign updated successfully" };
 };
 
 export const deleteCampaign = async (id: string): Promise<ApiResponse<void>> => {
-  // In a real app:
-  // return fetch(`${API_BASE_URL}/campaigns/${id}`, { method: 'DELETE' }).then(res => res.json());
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaigns/${id}`, {
+      method: 'DELETE'
+    });
 
-  // For development:
-  const index = mockCampaigns.findIndex(c => c.id === id);
-  if (index === -1) {
-    return { error: "Campaign not found" };
-  }
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || `Error: ${response.status} ${response.statusText}` };
+    }
 
-  mockCampaigns[index].status = "DELETED";
-  return { message: "Campaign deleted successfully" };
+    return { message: "Campaign deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting campaign:", error);
+
+    // Fallback behavior if backend is not available
+    const index = fallbackCampaigns.findIndex(c => c.id === id);
+    if (index === -1) {
+      return { error: "Campaign not found" };
+    }
+
+    // Mark as deleted (soft delete)
+    fallbackCampaigns[index].status = "deleted";
+
+    return {
+      message: "Campaign deleted successfully (using fallback storage)",
+      error: "Backend server is not available"
+    };
+  };
 };
 
 // LinkedIn Message API
 export const generatePersonalizedMessage = async (profileData: LinkedInProfile): Promise<ApiResponse<PersonalizedMessageResponse>> => {
   try {
+    // Call the backend API to generate a personalized message using Gemini
     const response = await fetch(`${API_BASE_URL}/personalized-message`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(profileData)
+      body: JSON.stringify({
+        profileData,
+
+      })
     });
 
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+    const result = await handleApiResponse<PersonalizedMessageResponse>(response);
+
+    if (result.data) {
+      return result;
     }
 
-    const data = await response.json();
-    return { data };
+    throw new Error(result.error || "Failed to generate message");
   } catch (error) {
-    console.error('Error generating personalized message:', error);
+    console.error("Error generating message:", error);
 
-    // Fallback if API call fails
-    const fallbackMessage = `Hey ${profileData.name}, I noticed you're a ${profileData.job_title} at ${profileData.company}. Our campaign management system could help streamline your outreach efforts. Would you be open to a quick chat?`;
+    // Fallback if backend API call fails - generate a message locally
+    const { name, job_title, company, location, summary } = profileData;
+
+    // Extract industry from summary if possible
+    const industryKeywords = [
+      "tech", "technology", "software", "IT",
+      "healthcare", "medical", "health",
+      "finance", "financial", "banking",
+      "marketing", "advertising", "media",
+      "retail", "ecommerce", "sales",
+      "education", "academic", "research"
+    ];
+
+    let industry = "your industry";
+    for (const keyword of industryKeywords) {
+      if (summary.toLowerCase().includes(keyword)) {
+        industry = keyword;
+        break;
+      }
+    }
+
+    // Generate a personalized message based on the profile data
+    const message = `Hi ${name},
+
+I came across your profile and was impressed by your experience as ${job_title} at ${company}. Your background in ${industry} caught my attention, particularly your work in ${location}.
+
+${summary.includes("leadership") ? "Your leadership experience is exactly what I've been looking for in a connection." : "Your expertise is exactly what I've been looking for in a connection."}
+
+I'm reaching out because our AI-powered campaign management platform has helped several ${industry} professionals streamline their outreach efforts and increase response rates by up to 40%.
+
+Would you be open to a quick 15-minute call next week to discuss how we might be able to help ${company} achieve similar results?
+
+Looking forward to connecting,
+[Your Name]`;
 
     return {
-      data: { message: fallbackMessage },
-      error: error instanceof Error ? error.message : 'Failed to connect to the API'
+      data: {
+        message,
+        model: "fallback-template" // Indicate this is a fallback template
+      },
+      error: "Using fallback template: Backend server is not available or Gemini API call failed"
     };
   }
 };

@@ -1,27 +1,15 @@
 import { Request, Response } from 'express';
-import  { CampaignStatus } from '../models/Campaign';
-import { v4 as uuidv4 } from 'uuid'; // We'll use this for IDs
-
-// In-memory store for campaigns
-interface ICampaign {
-  id: string;
-  name: string;
-  description: string;
-  status: CampaignStatus;
-  leads: string[];
-  accountIDs: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const campaigns: ICampaign[] = [];
+import Campaign, { CampaignStatus } from '../models/Campaign';
+import mongoose from 'mongoose';
 
 // Get all campaigns (excluding DELETED)
-export const getCampaigns = async (req: Request, res: Response): Promise<void> => {
+export const getCampaigns = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const activeCampaigns = campaigns.filter(c => c.status !== CampaignStatus.DELETED);
-    res.status(200).json(activeCampaigns);
+    // Find all campaigns that are not deleted
+    const campaigns = await Campaign.find({ status: { $ne: CampaignStatus.DELETED } });
+    res.status(200).json(campaigns);
   } catch (error) {
+    console.error('Error in getCampaigns:', error);
     res.status(500).json({
       message: 'Error fetching campaigns',
       error: error instanceof Error ? error.message : String(error)
@@ -34,20 +22,26 @@ export const getCampaignById = async (req: Request, res: Response): Promise<void
   try {
     const { id } = req.params;
 
-    const campaign = campaigns.find(c => c.id === id);
+    // Validate if the id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: 'Invalid campaign ID format' });
+      return;
+    }
+
+    // Find campaign by ID and ensure it's not deleted
+    const campaign = await Campaign.findOne({
+      _id: id,
+      status: { $ne: CampaignStatus.DELETED }
+    });
 
     if (!campaign) {
       res.status(404).json({ message: 'Campaign not found' });
       return;
     }
 
-    if (campaign.status === CampaignStatus.DELETED) {
-      res.status(404).json({ message: 'Campaign not found' });
-      return;
-    }
-
     res.status(200).json(campaign);
   } catch (error) {
+    console.error('Error in getCampaignById:', error);
     res.status(500).json({
       message: 'Error fetching campaign',
       error: error instanceof Error ? error.message : String(error)
@@ -60,26 +54,41 @@ export const createCampaign = async (req: Request, res: Response): Promise<void>
   try {
     const { name, description, status, leads, accountIDs } = req.body;
 
+    // Validate required fields
+    if (!name || !description) {
+      res.status(400).json({ message: 'Name and description are required' });
+      return;
+    }
+
     // Validate status if provided
     if (status && !Object.values(CampaignStatus).includes(status)) {
       res.status(400).json({ message: 'Invalid status value' });
       return;
     }
 
-    const newCampaign: ICampaign = {
-      id: uuidv4(),
+    // Convert string accountIDs to ObjectIds if provided
+    let objectIdAccountIDs: mongoose.Types.ObjectId[] = [];
+    if (accountIDs && Array.isArray(accountIDs)) {
+      objectIdAccountIDs = accountIDs
+        .filter(id => mongoose.Types.ObjectId.isValid(id))
+        .map(id => new mongoose.Types.ObjectId(id.toString()));
+    }
+
+    // Create new campaign
+    const newCampaign = new Campaign({
       name,
       description,
       status: status || CampaignStatus.ACTIVE,
       leads: leads || [],
-      accountIDs: accountIDs || [],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+      accountIDs: objectIdAccountIDs
+    });
 
-    campaigns.push(newCampaign);
+    // Save to database
+    await newCampaign.save();
+
     res.status(201).json(newCampaign);
   } catch (error) {
+    console.error('Error in createCampaign:', error);
     res.status(400).json({
       message: 'Error creating campaign',
       error: error instanceof Error ? error.message : String(error)
@@ -93,39 +102,66 @@ export const updateCampaign = async (req: Request, res: Response): Promise<void>
     const { id } = req.params;
     const { name, description, status, leads, accountIDs } = req.body;
 
+    // Validate if the id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: 'Invalid campaign ID format' });
+      return;
+    }
+
     // Validate status if provided
     if (status && !Object.values(CampaignStatus).includes(status)) {
       res.status(400).json({ message: 'Invalid status value' });
       return;
     }
 
-    const campaignIndex = campaigns.findIndex(c => c.id === id);
+    // Ensure status is only ACTIVE or INACTIVE (not DELETED)
+    if (status && status === CampaignStatus.DELETED) {
+      res.status(400).json({ message: 'Cannot set status to DELETED directly' });
+      return;
+    }
 
-    if (campaignIndex === -1) {
+    // Find campaign by ID and ensure it's not deleted
+    const campaign = await Campaign.findOne({
+      _id: id,
+      status: { $ne: CampaignStatus.DELETED }
+    });
+
+    if (!campaign) {
       res.status(404).json({ message: 'Campaign not found' });
       return;
     }
 
-    if (campaigns[campaignIndex].status === CampaignStatus.DELETED) {
-      res.status(404).json({ message: 'Campaign not found' });
-      return;
+    // Convert string accountIDs to ObjectIds if provided
+    let objectIdAccountIDs: mongoose.Types.ObjectId[] | undefined;
+    if (accountIDs && Array.isArray(accountIDs)) {
+      objectIdAccountIDs = accountIDs
+        .filter(id => mongoose.Types.ObjectId.isValid(id))
+        .map(id => new mongoose.Types.ObjectId(id.toString()));
     }
 
     // Update campaign
-    const updatedCampaign = {
-      ...campaigns[campaignIndex],
-      name: name || campaigns[campaignIndex].name,
-      description: description || campaigns[campaignIndex].description,
-      status: status || campaigns[campaignIndex].status,
-      leads: leads || campaigns[campaignIndex].leads,
-      accountIDs: accountIDs || campaigns[campaignIndex].accountIDs,
-      updatedAt: new Date()
-    };
+    const updatedCampaign = await Campaign.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          ...(name && { name }),
+          ...(description && { description }),
+          ...(status && { status }),
+          ...(leads && { leads }),
+          ...(objectIdAccountIDs && { accountIDs: objectIdAccountIDs })
+        }
+      },
+      { new: true, runValidators: true }
+    );
 
-    campaigns[campaignIndex] = updatedCampaign;
+    if (!updatedCampaign) {
+      res.status(404).json({ message: 'Campaign not found' });
+      return;
+    }
 
     res.status(200).json(updatedCampaign);
   } catch (error) {
+    console.error('Error in updateCampaign:', error);
     res.status(400).json({
       message: 'Error updating campaign',
       error: error instanceof Error ? error.message : String(error)
@@ -138,27 +174,33 @@ export const deleteCampaign = async (req: Request, res: Response): Promise<void>
   try {
     const { id } = req.params;
 
-    const campaignIndex = campaigns.findIndex(c => c.id === id);
-
-    if (campaignIndex === -1) {
-      res.status(404).json({ message: 'Campaign not found' });
+    // Validate if the id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: 'Invalid campaign ID format' });
       return;
     }
 
-    if (campaigns[campaignIndex].status === CampaignStatus.DELETED) {
+    // Find campaign by ID and ensure it's not already deleted
+    const campaign = await Campaign.findOne({
+      _id: id,
+      status: { $ne: CampaignStatus.DELETED }
+    });
+
+    if (!campaign) {
       res.status(404).json({ message: 'Campaign not found' });
       return;
     }
 
     // Soft delete by setting status to DELETED
-    campaigns[campaignIndex].status = CampaignStatus.DELETED;
-    campaigns[campaignIndex].updatedAt = new Date();
+    campaign.status = CampaignStatus.DELETED;
+    await campaign.save();
 
     res.status(200).json({
       message: 'Campaign deleted successfully',
-      campaign: campaigns[campaignIndex]
+      campaign
     });
   } catch (error) {
+    console.error('Error in deleteCampaign:', error);
     res.status(500).json({
       message: 'Error deleting campaign',
       error: error instanceof Error ? error.message : String(error)

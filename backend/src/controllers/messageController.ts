@@ -4,6 +4,7 @@ import { generatePersonalizedMessage, Profile } from '../services/aiService';
 export const createPersonalizedMessage = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log('Received personalized message request');
+    console.log(req.body)
     const { name, job_title, company, location, summary } = req.body;
     console.log(`Request for: ${name}, ${job_title} at ${company}`);
 
