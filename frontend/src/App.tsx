@@ -12,10 +12,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-lg">CM</span>
+                <span className="text-black font-bold text-lg">CM</span>
               </div>
-              <h1 className="text-2xl font-semibold bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">
-                Campaign Manager
+              <h1 className="text-2xl font-semibold bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-blue-500">
+                Campaign Manager 
               </h1>
             </Link>
             <nav className="flex space-x-2">
@@ -54,11 +54,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <main className="container mx-auto px-6 py-8">
         {children}
       </main>
-      <footer className="bg-white border-t border-brand-gray-100 py-6 mt-auto">
+      <footer className="bg-blue-500 border-t border-brand-gray-100 py-6 mt-auto">
         <div className="container mx-auto px-6 text-center">
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center">
-              <span className="text-white font-bold text-xs">CM</span>
+              <span className="text-black font-bold text-xs">CM</span>
             </div>
             <p className="text-brand-gray-500 text-sm">
               Campaign Management System © {new Date().getFullYear()}

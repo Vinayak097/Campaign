@@ -5,11 +5,13 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <header className="border-b bg-white">
+    <header className="border-b bg-blue-500">
+      
+
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5 " />
           </Button>
           <Link to="/" className="flex items-center gap-2">
             <div className="font-bold text-xl bg-gradient-to-r from-brand-purple to-brand-darkPurple bg-clip-text text-transparent">OutreachAlchemy</div>

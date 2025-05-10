@@ -63,20 +63,21 @@ const MessageGeneratorPage = () => {
         <h1 className="text-3xl font-bold bg-gradient-to-r from-brand-purple to-brand-darkPurple bg-clip-text text-transparent">
           LinkedIn Message Generator
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-brand-gray-500 mt-1">
           Create personalized outreach messages based on LinkedIn profiles using AI
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-6 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <div className="bg-brand-red/10 border border-brand-red/20 text-brand-red px-6 py-4 rounded-xl mb-8 flex items-center backdrop-blur-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
-          <p>{error}</p>
+          <p className="font-medium">{error}</p>
           <button
             onClick={() => setError(null)}
-            className="ml-auto text-red-700 hover:text-red-900"
+            className="ml-auto text-brand-red hover:text-brand-red/80 transition-colors"
+            aria-label="Dismiss"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -99,7 +100,7 @@ const MessageGeneratorPage = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-brand-gray-700 mb-1">Name</label>
                 <input
                   type="text"
                   name="name"
@@ -111,7 +112,7 @@ const MessageGeneratorPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+                <label className="block text-sm font-medium text-brand-gray-700 mb-1">Job Title</label>
                 <input
                   type="text"
                   name="job_title"
@@ -125,7 +126,7 @@ const MessageGeneratorPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                <label className="block text-sm font-medium text-brand-gray-700 mb-1">Company</label>
                 <input
                   type="text"
                   name="company"
@@ -137,7 +138,7 @@ const MessageGeneratorPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <label className="block text-sm font-medium text-brand-gray-700 mb-1">Location</label>
                 <input
                   type="text"
                   name="location"
@@ -150,7 +151,7 @@ const MessageGeneratorPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Summary</label>
+              <label className="block text-sm font-medium text-brand-gray-700 mb-1">Profile Summary</label>
               <textarea
                 name="summary"
                 value={formData.summary}
@@ -164,7 +165,7 @@ const MessageGeneratorPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-3 bg-brand-purple text-white rounded-md hover:bg-brand-darkPurple transition-colors disabled:opacity-50 flex items-center justify-center"
+              className="w-full px-4 py-3 bg-brand-purple text-black border-b border-r hover:border cursor-pointer rounded-md hover:bg-brand-darkPurple transition-colors disabled:opacity-50 flex items-center justify-center"
             >
               {loading ? (
                 <>
@@ -250,11 +251,11 @@ const MessageGeneratorPage = () => {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-brand-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
-              <p className="text-gray-500 mb-2">No message generated yet</p>
-              <p className="text-gray-400 text-sm max-w-md">
+              <p className="text-brand-gray-500 mb-2">No message generated yet</p>
+              <p className="text-brand-gray-400 text-sm max-w-md">
                 Fill out the profile information form and click "Generate Message" to create a personalized outreach message.
               </p>
             </div>
@@ -262,7 +263,7 @@ const MessageGeneratorPage = () => {
         </div>
       </div>
 
-      <div className="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600">
+      <div className="mt-8 bg-brand-gray-50 border border-brand-gray-200 rounded-lg p-4 text-sm text-brand-gray-600">
         <div className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-brand-purple mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />

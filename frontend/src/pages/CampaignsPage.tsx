@@ -54,12 +54,12 @@ const CampaignsPage = () => {
 
   // Function to get status color
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
+    switch (status.toUpperCase()) {
+      case "ACTIVE":
         return "bg-brand-green/10 text-brand-green border-brand-green/20";
-      case "inactive":
+      case "INACTIVE":
         return "bg-brand-gray-100 text-brand-gray-600 border-brand-gray-200";
-      case "deleted":
+      case "DELETED":
         return "bg-brand-red/10 text-brand-red border-brand-red/20";
       default:
         return "bg-brand-blue/10 text-brand-blue border-brand-blue/20";
@@ -79,7 +79,7 @@ const CampaignsPage = () => {
         </div>
         <Link
           to="/campaigns/new"
-          className="px-6 py-3 bg-brand-blue text-white rounded-full hover:bg-brand-darkBlue transition-all duration-300 flex items-center justify-center md:justify-start w-full md:w-auto shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="px-6 py-3 bg-brand-blue text-black rounded-full hover:bg-brand-darkBlue transition-all duration-300 flex items-center justify-center md:justify-start w-full md:w-auto shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />

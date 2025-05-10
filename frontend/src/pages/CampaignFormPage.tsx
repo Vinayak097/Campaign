@@ -76,7 +76,7 @@ const CampaignFormPage = () => {
       const campaignData: Campaign = {
         name: formData.name,
         description: formData.description,
-        status: formData.isActive ? "active" : "inactive",
+        status: formData.isActive ? "ACTIVE" : "INACTIVE",
         leads: formData.leads.split(",").map(lead => lead.trim()).filter(Boolean),
         accountIDs: formData.accountIDs.split(",").map(accId => accId.trim()).filter(Boolean)
       };
@@ -119,15 +119,27 @@ const CampaignFormPage = () => {
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <p>{error}</p>
+        <div className="bg-brand-red/10 border border-brand-red/20 text-brand-red px-6 py-4 rounded-xl mb-6 flex items-center backdrop-blur-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          <p className="font-medium">{error}</p>
+          <button
+            onClick={() => setError(null)}
+            className="ml-auto text-brand-red hover:text-brand-red/80 transition-colors"
+            aria-label="Dismiss"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
         </div>
       )}
 
       <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Campaign Name</label>
+            <label className="block text-sm font-medium text-brand-gray-700 mb-1">Campaign Name</label>
             <input
               type="text"
               name="name"
@@ -140,7 +152,7 @@ const CampaignFormPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-brand-gray-700 mb-1">Description</label>
             <textarea
               name="description"
               value={formData.description}
@@ -152,10 +164,10 @@ const CampaignFormPage = () => {
             />
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between p-4 bg-brand-gray-50 rounded-lg border border-brand-gray-200">
             <div>
               <h3 className="font-medium">Active Status</h3>
-              <p className="text-sm text-gray-600">Set the campaign as active or inactive</p>
+              <p className="text-sm text-brand-gray-600">Set the campaign as active or inactive</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -169,7 +181,7 @@ const CampaignFormPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Leads</label>
+            <label className="block text-sm font-medium text-brand-gray-700 mb-1">Leads</label>
             <textarea
               name="leads"
               value={formData.leads}
@@ -181,7 +193,7 @@ const CampaignFormPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Account IDs</label>
+            <label className="block text-sm font-medium text-brand-gray-700 mb-1">Account IDs</label>
             <input
               type="text"
               name="accountIDs"
@@ -196,14 +208,14 @@ const CampaignFormPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-brand-purple text-white rounded hover:bg-brand-darkPurple transition-colors disabled:opacity-50"
+              className=" px-4 py-2 bg-brand-purple text-black border-b cursor-pointer rounded hover:bg-brand-darkPurple transition-colors disabled:opacity-50"
             >
               {loading ? "Saving..." : id ? "Update Campaign" : "Create Campaign"}
             </button>
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 bg-white text-brand-gray-700 border border-brand-gray-300 rounded hover:bg-brand-gray-50 transition-colors"
             >
               Cancel
             </button>
